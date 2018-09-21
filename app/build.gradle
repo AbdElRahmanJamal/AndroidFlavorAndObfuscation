@@ -1,0 +1,61 @@
+apply plugin: 'com.android.application'
+
+android {
+    signingConfigs {
+        appfreereleasev1 {
+            keyAlias 'the.key'
+            keyPassword 'zzzzzzzz'
+            storeFile file('E:/AndroidFlavorAndObfuscation/app/free/release/app-free-release-v1.apk')
+            storePassword 'zzzzzzzz'
+        }
+    }
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.bvo.androidflavorandobfuscation"
+        minSdkVersion 18
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            applicationIdSuffix ".release"
+            signingConfig signingConfigs.appfreereleasev1
+        }
+        debug {
+            applicationIdSuffix ".debug"
+        }
+        stubs {
+            applicationVariants.all { variant ->
+                variant.outputs.all { output ->
+                    def file = output.outputFile
+                    outputFileName = file.name.replace('.apk', '-v' + variant.versionCode + '.apk')
+                }
+            }
+        }
+    }
+    flavorDimensions "versions"
+    productFlavors {
+        free {
+            dimension "versions"
+            applicationId "com.bvo.androidflavorandobfuscation.free" //this applicationId to have free and paid in  the same device
+        }
+        paid {
+            dimension "versions"
+            applicationId "com.bvo.androidflavorandobfuscation.paid"//this applicationId to have free and paid in  the same device
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:28.0.0-rc02'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
